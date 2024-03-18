@@ -12,8 +12,9 @@
     button:hover { background-color: #0056b3; }
     img { margin-top: 20px; border-radius: 5px; box-shadow: 0 0 5px rgba(0,0,0,0.2); }
     p { margin: 20px auto; line-height: 1.6; }
-    #result { margin: 20px; font-size: 20px; color: #28a745; }
-    .answerSection { margin-top: 20px; }
+    #result { margin: 20px; font-size: 20px; }
+    .correct { color: #28a745; }
+    .incorrect { color: red; }
   </style>
 </head>
 <body>
@@ -37,7 +38,7 @@
   </div>
 
   <div id="endScreen" class="hidden">
-    <p>Thank you for playing! You've reached the end of the quiz. How well did you do in recognizing AI-generated images from real ones?</p>
+    <p id="finalScore">Thank you for playing!</p>
     <button onclick="document.location.reload()">Try Again</button>
   </div>
 </div>
@@ -54,6 +55,7 @@
     { src: "portrait1_002.jpeg", answer: "Real" },
   ];
   let currentIndex = 0;
+  let correctAnswers = 0;
 
   document.getElementById('startButton').addEventListener('click', function() {
     this.style.display = 'none';
@@ -65,7 +67,15 @@
     const selectedValue = document.querySelector('input[name="aiOrReal"]:checked')?.value;
     const resultText = document.getElementById('result');
     if (selectedValue) {
-      resultText.textContent = "Correct answer is: " + images[currentIndex].answer;
+      if (selectedValue === images[currentIndex].answer) {
+        resultText.classList.add('correct');
+        resultText.classList.remove('incorrect');
+        correctAnswers++;
+      } else {
+        resultText.classList.add('incorrect');
+        resultText.classList.remove('correct');
+      }
+      resultText.textContent = `Correct answer is: ${images[currentIndex].answer}. You've gotten ${correctAnswers} correct so far.`;
       resultText.classList.remove('hidden');
       document.getElementById('nextImage').classList.remove('hidden');
     } else {
@@ -82,6 +92,7 @@
     } else {
       document.getElementById('quizSection').classList.add('hidden');
       document.getElementById('endScreen').classList.remove('hidden');
+      document.getElementById('finalScore').textContent += ` You got ${correctAnswers} out of ${images.length} questions correct.`;
     }
   });
 
